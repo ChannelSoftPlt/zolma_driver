@@ -18,9 +18,9 @@ import 'package:zolma_driver/domain/domain.dart';
 import 'package:signature/signature.dart';
 
 class ProcessDelivery extends StatefulWidget {
-  final String deliveryid, deliverycode;
+  final String deliveryid, deliverycode, deliverytype;
 
-  ProcessDelivery({this.deliveryid, this.deliverycode});
+  ProcessDelivery({this.deliveryid, this.deliverycode, this.deliverytype});
 
   @override
   _ProcessDeliveryState createState() => _ProcessDeliveryState();
@@ -299,7 +299,7 @@ class _ProcessDeliveryState extends State<ProcessDelivery> {
       dynamic getdriver = await FlutterSession().get("driverid");
       Map data = await Domain.callApi(Domain.getdriverinfo, {
         'submit': '1',
-        'type': 'PR',
+        'type': widget.deliverytype,
         'status': '1',
         'deliveryid': widget.deliveryid,
         'driverid': getdriver.toString(),

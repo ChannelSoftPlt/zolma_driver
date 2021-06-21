@@ -150,10 +150,18 @@ class _DeliveryHistoryState extends State<DeliveryHistory> {
                         )),
                   ),
                   subtitle: GestureDetector(
-                    child: Row(
+                    child: Column(
                       mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
+                      MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
+                        Text(
+                            "Collection: " +
+                                deliveries[i].collection.toString(),
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 16,
+                            )),
                         Text(
                             "Document Code: "+deliveries[i].deliverycode,
                             style: TextStyle(

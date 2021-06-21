@@ -1,5 +1,6 @@
 class Delivery {
   int id, dealerid, driverid, status, urgent, identify;
+  double collection;
   String deliverycode,
       pickupgps,
       remark,
@@ -8,7 +9,8 @@ class Delivery {
       note,
       signature,
       type,
-      systemcode;
+      systemcode,
+      notephoto;
 
   Delivery(
       {this.id,
@@ -20,12 +22,22 @@ class Delivery {
         this.status,
         this.dealerid,
         this.picture,
+        this.notephoto,
         this.name,
         this.urgent,
         this.note,
         this.identify,
         this.signature,
+        this.collection,
         this.type});
+
+  static double checkDouble(num value) {
+    try {
+      return value is double ? value : value.toDouble();
+    } catch ($e) {
+      return 0.00;
+    }
+  }
 
   factory Delivery.fromJson(Map<String, dynamic> json) {
     return Delivery(
@@ -37,12 +49,14 @@ class Delivery {
         remark: json["remark"],
         status: json["status"],
         dealerid: json["dealerid"],
+        notephoto: json["note_photo"],
         picture: json["picture_record"],
         name: json["name"],
         urgent: json["urgent"],
         note: json["note"],
         identify: json["identify"],
         signature: json["signature"],
+        collection: checkDouble(json['collection']),
         type: json["type"]);
   }
 

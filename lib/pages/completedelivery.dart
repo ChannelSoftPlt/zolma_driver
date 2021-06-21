@@ -47,7 +47,7 @@ class _CompleteDeliveryState extends State<CompleteDelivery> {
   ImageProvider provider;
 
   final picker = ImagePicker();
-  var compressedFileSource;
+  var compressedFileSource, takenotephoto;
 
   Future fetchDelivery(String dealerid) async {
     Map data = await Domain.callApi(Domain.getdelivery, {
@@ -165,7 +165,7 @@ class _CompleteDeliveryState extends State<CompleteDelivery> {
             Container(
               alignment: Alignment.center,
               child: InkWell(
-                onTap: () => _showSelectionDialog(context),
+                onTap: () => _showSelectionDialog(context, "firsttakephoto"),
                 child: compressedFileSource != null
                     ? Image.memory(
                   compressedFileSource,
@@ -219,6 +219,42 @@ class _CompleteDeliveryState extends State<CompleteDelivery> {
                 labelText: "Remark",
               ),
             ),
+            Container(
+                padding: EdgeInsets.all(15),
+                child: Text("Take note photo",
+                    style: TextStyle(color: Colors.black, fontSize: 20))),
+            Stack(fit: StackFit.passthrough, overflow: Overflow.visible, children: [
+              Container(
+                margin: const EdgeInsets.fromLTRB(15,0,0,0),
+                alignment: Alignment.centerLeft,
+                child: InkWell(
+                  onTap: () => _showSelectionDialog(context, "notephoto"),
+                  child: takenotephoto != null
+                      ? Image.memory(
+                    takenotephoto,
+                    width: double.infinity,
+                  )
+                      : Icon(
+                    Icons.camera_alt,
+                    size: 50,
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: takenotephoto != null,
+                child: Container(
+                    padding: EdgeInsets.all(5),
+                    height: 150,
+                    alignment: Alignment.topRight,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.delete,
+                        color: Colors.red[200],
+                      ),
+                      onPressed: clearNoteImage,
+                    )),
+              ),
+            ]),
             Visibility(
               visible: widget.deliverytype!="PR",
               child: Container(
@@ -338,6 +374,12 @@ class _CompleteDeliveryState extends State<CompleteDelivery> {
     });
   }
 
+  clearNoteImage() {
+    setState(() {
+      takenotephoto = null;
+    });
+  }
+
   /*-------------------------------Submit Delivery Info---------------------------------------------------*/
   void updateDelivery(matchresult) async {
     final Uint8List setSignature = await _signcontroller.toPngBytes();
@@ -345,7 +387,7 @@ class _CompleteDeliveryState extends State<CompleteDelivery> {
     if(compressedFileSource != null) {
       dynamic getdriver = await FlutterSession().get("driverid");
       Map data = await Domain.callApi(Domain.getdriverinfo, {
-        'submit': '1',
+        'submitting': '1',
         'type': widget.deliverytype,
         'status': '2',
         'deliveryid': widget.deliveryid,
@@ -357,6 +399,9 @@ class _CompleteDeliveryState extends State<CompleteDelivery> {
             : '',
         'image': compressedFileSource != null
             ? base64Encode(compressedFileSource).toString()
+            : '',
+        'note_photo': takenotephoto != null
+            ? base64Encode(takenotephoto).toString()
             : '',
       });
 
@@ -404,7 +449,7 @@ class _CompleteDeliveryState extends State<CompleteDelivery> {
   }
 
   /*-----------------------------------------photo compress-------------------------------------------*/
-  Future<void> _showSelectionDialog(BuildContext context) {
+  Future<void> _showSelectionDialog(BuildContext context, String phototype) {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -424,7 +469,7 @@ class _CompleteDeliveryState extends State<CompleteDelivery> {
                         color: Colors.white,
                       ),
                       onPressed: () {
-                        getImage(false);
+                        getImage(false,phototype);
                         Navigator.pop(context);
                       },
                     ),
@@ -442,7 +487,7 @@ class _CompleteDeliveryState extends State<CompleteDelivery> {
                         color: Colors.white,
                       ),
                       onPressed: () {
-                        getImage(true);
+                        getImage(true,phototype);
                         Navigator.pop(context);
                       },
                     ),
@@ -469,14 +514,14 @@ class _CompleteDeliveryState extends State<CompleteDelivery> {
   /*
   * compress purpose
   * */
-  Future getImage(isCamera) async {
+  Future getImage(isCamera,phototype) async {
     imagePath = await picker.getImage(
         source: isCamera ? ImageSource.camera : ImageSource.gallery);
     // compressFileMethod();
-    _cropImage();
+    _cropImage(phototype);
   }
 
-  Future<Null> _cropImage() async {
+  Future<Null> _cropImage(phototype) async {
     File croppedFile = (await ImageCropper.cropImage(
         sourcePath: imagePath.path,
         aspectRatioPresets: Platform.isAndroid
@@ -508,11 +553,11 @@ class _CompleteDeliveryState extends State<CompleteDelivery> {
         )));
     if (croppedFile != null) {
       _image = croppedFile;
-      compressFileMethod();
+      compressFileMethod(phototype);
     }
   }
 
-  void compressFileMethod() async {
+  void compressFileMethod(phototype) async {
     await Future.delayed(Duration(milliseconds: 300));
 
     Uint8List bytes = _image.readAsBytesSync();
@@ -522,7 +567,11 @@ class _CompleteDeliveryState extends State<CompleteDelivery> {
 
     File file = createFile("${dir.absolute.path}/test.png");
     file.writeAsBytesSync(data.buffer.asUint8List());
-    compressedFileSource = await compressFile(file);
+    if(phototype=="notephoto"){
+      takenotephoto = await compressFile(file);
+    }else {
+      compressedFileSource = await compressFile(file);
+    }
     setState(() {});
   }
 

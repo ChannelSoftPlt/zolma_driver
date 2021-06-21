@@ -66,6 +66,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
 
       deliveries.addAll(responseJson.map((e) => Delivery.fromJson(e)));
       currentdeliveries.addAll(responseJson.map((e) => Delivery.fromJson(e)));
+
       for (int i = 0; i < deliveries.length; i++) {
         if (deliveries[i].status == 1) {
           counttrue = counttrue + 1;
@@ -74,9 +75,10 @@ class _DeliveryPageState extends State<DeliveryPage> {
         }
       }
       aftercount = counttrue + countPR;
-      print("aftercount: "+aftercount.toString());
-      print("counttrue: "+counttrue.toString());
-      print("countPR: "+countPR.toString());
+
+      // print("aftercount: "+aftercount.toString());
+      // print("counttrue: "+counttrue.toString());
+      // print("countPR: "+countPR.toString());
     } else {
       _refreshController.loadNoData();
       itemFinish = true;
@@ -351,6 +353,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
                             fontSize: 20,
                           ))),
                 ),
+                //Product Return Part*************************************
                 currentdeliveries[i].status == 2
                     ? GestureDetector(
                   onTap: () {
@@ -388,21 +391,35 @@ class _DeliveryPageState extends State<DeliveryPage> {
                                 )),
                           ),
                           subtitle: GestureDetector(
-                            child: Row(
+                            child: Column(
                               mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
+                              MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
+                                Text(
+                                    "Collection: RM " +
+                                        deliveries[i].collection.toString(),
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 16,
+                                    )),
                                 Text(
                                     "SC: " +
                                         deliveries[i].type +
                                         " " +
-                                        deliveries[i].systemcode +
-                                        "\nDC: " +
-                                        deliveries[i].deliverycode,
+                                        deliveries[i].systemcode,
                                     style: TextStyle(
                                       color: Colors.deepOrange,
                                       fontSize: 14,
                                     )),
+
+                                Text(
+                                  "DC: " +
+                                    deliveries[i].deliverycode,
+                                    style: TextStyle(
+                                  color: Colors.deepOrange,
+                                  fontSize: 14,
+                                )),
                               ],
                             ),
                           ),
@@ -412,6 +429,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
                     ),
                   ),
                 )
+                //Pick up Part*************************************
                     : currentdeliveries[i].status == 1
                     ? GestureDetector(
                   onTap: () {
@@ -431,11 +449,12 @@ class _DeliveryPageState extends State<DeliveryPage> {
                               caption: 'Completed',
                               color: Colors.blueGrey[400],
                               onTap: () {
-                                deliveries[i].type == "PR"
+                                deliveries[i].type != "OD"
                                     ? navigateToNextActivity(
                                     context,
                                     deliveries[i].id,
-                                    deliveries[i].deliverycode)
+                                    deliveries[i].deliverycode,
+                                    deliveries[i].type)
                                     : navigateToCompleteState(
                                     context,
                                     deliveries[i].id,
@@ -466,16 +485,29 @@ class _DeliveryPageState extends State<DeliveryPage> {
                                 )),
                           ),
                           subtitle: GestureDetector(
-                            child: Row(
+                            child: Column(
                               mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
+                              MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
+                                Text(
+                                    "Collection: RM " +
+                                        deliveries[i].collection.toString(),
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 16,
+                                    )),
                                 Text(
                                     "SC: " +
                                         deliveries[i].type +
                                         " " +
-                                        deliveries[i].systemcode +
-                                        "\nDC: " +
+                                        deliveries[i].systemcode,
+                                    style: TextStyle(
+                                      color: Colors.deepOrange,
+                                      fontSize: 14,
+                                    )),
+                                Text(
+                                    "DC: " +
                                         deliveries[i].deliverycode,
                                     style: TextStyle(
                                       color: Colors.deepOrange,
@@ -490,6 +522,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
                     ),
                   ),
                 )
+                //Pending Part*************************************
                     : GestureDetector(
                   onTap: () {
                     showDealerinfo(
@@ -514,16 +547,29 @@ class _DeliveryPageState extends State<DeliveryPage> {
                               )),
                         ),
                         subtitle: GestureDetector(
-                          child: Row(
+                          child: Column(
                             mainAxisAlignment:
-                            MainAxisAlignment.spaceBetween,
+                            MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
+                              Text(
+                                  "Collection: RM " +
+                                      deliveries[i].collection.toString(),
+                                  style: TextStyle(
+                                    color: Colors.green,
+                                    fontSize: 16,
+                                  )),
                               Text(
                                   "SC: " +
                                       deliveries[i].type +
                                       " " +
-                                      deliveries[i].systemcode +
-                                      "\nDC: " +
+                                      deliveries[i].systemcode,
+                                  style: TextStyle(
+                                    color: Colors.deepOrange,
+                                    fontSize: 14,
+                                  )),
+                              Text(
+                                  "DC: " +
                                       deliveries[i].deliverycode,
                                   style: TextStyle(
                                     color: Colors.deepOrange,
@@ -571,11 +617,12 @@ class _DeliveryPageState extends State<DeliveryPage> {
   }
 
   navigateToNextActivity(
-      BuildContext context, int dataHolder, String deliverycode) {
+      BuildContext context, int dataHolder, String deliverycode, String type) {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => ProcessDelivery(
         deliveryid: dataHolder.toString(),
         deliverycode: deliverycode,
+        deliverytype: type,
       ),
     ));
   }

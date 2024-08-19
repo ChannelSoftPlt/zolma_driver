@@ -54,11 +54,9 @@ class _addDeliveryState extends State<addDelivery> {
   final String loremIpsum =
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
-
   Future fetchDealer() async {
     dynamic getdriver = await FlutterSession().get("driverid");
-    Map data = await Domain.callApi(
-        Domain.listdealer, {'getlist': '1', 'driverid': getdriver.toString()});
+    Map data = await Domain.callApi(Domain.listdealer, {'getlist': '1', 'driverid': getdriver.toString()});
 
     dealers = [];
     if (data['status'] == '1') {
@@ -69,7 +67,7 @@ class _addDeliveryState extends State<addDelivery> {
       _showSnackBar("No Dealer yet");
     }
     setState(() {
-      for(int i=0; i<dealers.length; i++){
+      for (int i = 0; i < dealers.length; i++) {
         items.add(DropdownMenuItem(
           child: Text(dealers[i].name),
           value: dealers[i].name,
@@ -80,15 +78,13 @@ class _addDeliveryState extends State<addDelivery> {
 
   Future fetchDriver() async {
     dynamic getdriverid = await FlutterSession().get("driverid");
-    Map data = await Domain.callApi(Domain.getdriverinfo,
-        {'reading': '1', 'driverid': getdriverid.toString()});
+    Map data = await Domain.callApi(Domain.getdriverinfo, {'reading': '1', 'driverid': getdriverid.toString()});
 
     drivers = [];
     if (data['status'] == '1') {
       List responseJson = data['Driver'];
 
       drivers.addAll(responseJson.map((e) => DriverInfo.fromJson(e)));
-
     } else {
       _showSnackBar("Catch failed in driver info.");
     }
@@ -108,30 +104,29 @@ class _addDeliveryState extends State<addDelivery> {
 
   Future<bool> _onWillPop() async {
     return (await showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-        title: new Text('Are you sure?'),
-        content: new Text(
-            'Do you want to submit the result before leaving the page?'),
-        actions: <Widget>[
-          TextButton(
-              child: new Text('Submit result'),
-              onPressed: () {
-                Navigator.of(context).pop(true);
-                updateDelivery(qrCodeResult);
-              }),
-          TextButton(
-              child: new Text('Stay this page'),
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              }),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: new Text('Back'),
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Are you sure?'),
+            content: new Text('Do you want to submit the result before leaving the page?'),
+            actions: <Widget>[
+              TextButton(
+                  child: new Text('Submit result'),
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                    updateDelivery(qrCodeResult);
+                  }),
+              TextButton(
+                  child: new Text('Stay this page'),
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  }),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: new Text('Back'),
+              ),
+            ],
           ),
-        ],
-      ),
-    )) ??
+        )) ??
         false;
   }
 
@@ -148,8 +143,7 @@ class _addDeliveryState extends State<addDelivery> {
       onWillPop: _onWillPop,
       child: new Scaffold(
         key: key,
-        appBar: AppBar(
-            backgroundColor: Colors.blueGrey[400], title: Text('Add Delivery')),
+        appBar: AppBar(backgroundColor: Colors.blueGrey[400], title: Text('Add Delivery')),
         body: mainContent(),
       ),
     );
@@ -175,13 +169,13 @@ class _addDeliveryState extends State<addDelivery> {
               onTap: () => _showSelectionDialog(context),
               child: compressedFileSource != null
                   ? Image.memory(
-                compressedFileSource,
-                width: double.infinity,
-              )
+                      compressedFileSource,
+                      width: double.infinity,
+                    )
                   : Icon(
-                Icons.camera_alt,
-                size: 100,
-              ),
+                      Icons.camera_alt,
+                      size: 100,
+                    ),
             ),
           ),
           Visibility(
@@ -202,10 +196,7 @@ class _addDeliveryState extends State<addDelivery> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-                padding: EdgeInsets.all(15),
-                child: Text("Document Code: ",
-                    style: TextStyle(color: Colors.black, fontSize: 24))),
+            Container(padding: EdgeInsets.all(15), child: Text("Document Code: ", style: TextStyle(color: Colors.black, fontSize: 24))),
             TextField(
               controller: setdeliverycode,
               decoration: InputDecoration(
@@ -214,10 +205,7 @@ class _addDeliveryState extends State<addDelivery> {
                 labelText: "Document Code",
               ),
             ),
-            Container(
-                padding: EdgeInsets.all(15),
-                child: Text("Dealer:",
-                    style: TextStyle(color: Colors.black, fontSize: 20))),
+            Container(padding: EdgeInsets.all(15), child: Text("Dealer:", style: TextStyle(color: Colors.black, fontSize: 20))),
             Container(
               padding: EdgeInsets.all(15),
               child: SearchableDropdown.single(
@@ -228,22 +216,18 @@ class _addDeliveryState extends State<addDelivery> {
                 onChanged: (value) {
                   setState(() {
                     dealerName = value;
-                    for(int a=0; a<dealers.length; a++){
-                      if(dealerName == dealers[a].name){
-                        dealerValue=dealers[a].id.toString();
+                    for (int a = 0; a < dealers.length; a++) {
+                      if (dealerName == dealers[a].name) {
+                        dealerValue = dealers[a].id.toString();
                       }
                     }
                     print(dealerValue);
                   });
                 },
                 isExpanded: true,
-
               ),
             ),
-            Container(
-                padding: EdgeInsets.all(15),
-                child: Text("Remark",
-                    style: TextStyle(color: Colors.black, fontSize: 20))),
+            Container(padding: EdgeInsets.all(15), child: Text("Remark", style: TextStyle(color: Colors.black, fontSize: 20))),
             TextField(
               textInputAction: TextInputAction.newline,
               keyboardType: TextInputType.multiline,
@@ -257,8 +241,7 @@ class _addDeliveryState extends State<addDelivery> {
             ),
             Container(
               margin: const EdgeInsets.all(15.0),
-              decoration: BoxDecoration(
-                  border: Border.all(color: Colors.blueGrey[800])),
+              decoration: BoxDecoration(border: Border.all(color: Colors.blueGrey[800])),
               child: FlatButton(
                 padding: EdgeInsets.all(15),
                 child: Column(
@@ -274,11 +257,7 @@ class _addDeliveryState extends State<addDelivery> {
                             padding: EdgeInsets.only(left: 15),
                             child: Text(
                               "${qrCodeResult}",
-                              style: TextStyle(
-                                  color: qrCodeResult == "match"
-                                      ? Colors.green
-                                      : Colors.red,
-                                  fontSize: 16),
+                              style: TextStyle(color: qrCodeResult == "match" ? Colors.green : Colors.red, fontSize: 16),
                             ),
                           ),
                         ],
@@ -299,8 +278,7 @@ class _addDeliveryState extends State<addDelivery> {
                   ],
                 ),
                 onPressed: () async {
-                  String codeSanner =
-                  await BarcodeScanner.scan(); //barcode scnner
+                  String codeSanner = await BarcodeScanner.scan(); //barcode scnner
 
                   fetchSelectedDealer(codeSanner);
                 },
@@ -345,7 +323,7 @@ class _addDeliveryState extends State<addDelivery> {
   void updateDelivery(matchresult) async {
     dynamic getdriver = await FlutterSession().get("driverid");
 
-    if(compressedFileSource != null){
+    if (compressedFileSource != null) {
       Map data = await Domain.callApi(Domain.getdriverinfo, {
         'adddelivery': '1',
         'deliverycode': setdeliverycode.text.toString(),
@@ -355,9 +333,7 @@ class _addDeliveryState extends State<addDelivery> {
         'driverid': getdriver.toString(),
         'remark': setnote.text.toString(),
         'identity': matchresult,
-        'image': compressedFileSource != null
-            ? base64Encode(compressedFileSource).toString()
-            : '',
+        'image': compressedFileSource != null ? base64Encode(compressedFileSource).toString() : '',
         'creater': drivers[0].name,
       });
 
@@ -369,7 +345,7 @@ class _addDeliveryState extends State<addDelivery> {
               builder: (context) => MyApp(),
             ));
       }
-    }else{
+    } else {
       _showSnackBar("You must take photo before submit this case");
     }
   }
@@ -422,8 +398,7 @@ class _addDeliveryState extends State<addDelivery> {
                   SizedBox(
                     height: 40,
                     child: RaisedButton.icon(
-                      label: Text('Gallery',
-                          style: TextStyle(color: Colors.white)),
+                      label: Text('Gallery', style: TextStyle(color: Colors.white)),
                       color: Colors.orangeAccent,
                       icon: Icon(
                         Icons.perm_media,
@@ -476,8 +451,7 @@ class _addDeliveryState extends State<addDelivery> {
   * compress purpose
   * */
   Future getImage(isCamera) async {
-    imagePath = await picker.getImage(
-        source: isCamera ? ImageSource.camera : ImageSource.gallery);
+    imagePath = await picker.getImage(source: isCamera ? ImageSource.camera : ImageSource.gallery);
     // compressFileMethod();
     _cropImage();
   }
@@ -487,22 +461,22 @@ class _addDeliveryState extends State<addDelivery> {
         sourcePath: imagePath.path,
         aspectRatioPresets: Platform.isAndroid
             ? [
-          CropAspectRatioPreset.square,
-          CropAspectRatioPreset.ratio3x2,
-          CropAspectRatioPreset.original,
-          CropAspectRatioPreset.ratio4x3,
-          CropAspectRatioPreset.ratio16x9
-        ]
+                CropAspectRatioPreset.square,
+                CropAspectRatioPreset.ratio3x2,
+                CropAspectRatioPreset.original,
+                CropAspectRatioPreset.ratio4x3,
+                CropAspectRatioPreset.ratio16x9
+              ]
             : [
-          CropAspectRatioPreset.original,
-          CropAspectRatioPreset.square,
-          CropAspectRatioPreset.ratio3x2,
-          CropAspectRatioPreset.ratio4x3,
-          CropAspectRatioPreset.ratio5x3,
-          CropAspectRatioPreset.ratio5x4,
-          CropAspectRatioPreset.ratio7x5,
-          CropAspectRatioPreset.ratio16x9
-        ],
+                CropAspectRatioPreset.original,
+                CropAspectRatioPreset.square,
+                CropAspectRatioPreset.ratio3x2,
+                CropAspectRatioPreset.ratio4x3,
+                CropAspectRatioPreset.ratio5x3,
+                CropAspectRatioPreset.ratio5x4,
+                CropAspectRatioPreset.ratio7x5,
+                CropAspectRatioPreset.ratio16x9
+              ],
         androidUiSettings: AndroidUiSettings(
             toolbarTitle: 'Cropper',
             toolbarColor: Colors.deepPurple,

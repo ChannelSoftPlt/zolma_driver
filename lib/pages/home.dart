@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:zolma_driver/pages/mainpage.dart';
 import 'package:zolma_driver/pages/delivery.dart';
 import 'package:zolma_driver/pages/setting.dart';
 
@@ -29,7 +28,7 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
   int _currentIndex = 0;
 
   final List<Widget> _children = [
-    mainpage(),
+    //mainpage(),
     DeliveryPage(),
     Setting(),
   ];
@@ -56,10 +55,10 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
         currentIndex: _currentIndex,
 
         items: [
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.home),
-            title: new Text('Home'),
-          ),
+//          BottomNavigationBarItem(
+//            icon: new Icon(Icons.home),
+//            title: new Text('Home'),
+//          ),
           BottomNavigationBarItem(
             icon: new Icon(Icons.airport_shuttle_sharp),
             title: new Text('Delivery'),
